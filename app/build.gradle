@@ -1,14 +1,15 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id ""
 }
 
 android {
-    namespace 'com.example.salinas'
+    namespace 'com.example.sali'
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.salinas"
+        applicationId "com.example.sali"
         minSdk 21
         targetSdk 32
         versionCode 1

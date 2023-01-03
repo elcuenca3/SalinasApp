@@ -1,4 +1,4 @@
-package com.example.salinas
+package com.example.sali
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
