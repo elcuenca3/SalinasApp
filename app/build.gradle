@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.appsalinas'
+    namespace 'com.example.salinas'
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.appsalinas"
+        applicationId "com.example.salinas"
         minSdk 21
         targetSdk 32
         versionCode 1

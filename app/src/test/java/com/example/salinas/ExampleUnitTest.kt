@@ -1,4 +1,4 @@
-package com.example.appsalinas
+package com.example.salinas
 
 import org.junit.Test
 
