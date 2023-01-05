@@ -5,17 +5,20 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_envio.*
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 
-const val REQUEST_ENABLE_BT = 1
+const val REQUEST_BLUETOOTH_CONNECT_PERMISSION = 1
 
 class Envio : AppCompatActivity() {
 
@@ -32,6 +35,7 @@ class Envio : AppCompatActivity() {
         lateinit var m_address: String
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_envio)
@@ -46,6 +50,7 @@ class Envio : AppCompatActivity() {
             sendStringAsFile("LAPTOP-7UA4PLAP", mensajeFinal )
         }
     }
+    @RequiresApi(Build.VERSION_CODES.S)
     fun sendStringAsFile(deviceName: String, string: String) {
         val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
         if (bluetoothAdapter == null) {
@@ -57,29 +62,24 @@ class Envio : AppCompatActivity() {
             return
         }
         try {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted.
+                // Ask the user for permission.
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.BLUETOOTH_CONNECT),REQUEST_BLUETOOTH_CONNECT_PERMISSION
+                )
+            }
+
             val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter.bondedDevices
 
-        if (pairedDevices?.isEmpty() == true) {
-            // There are no paired devices.
-            return
-        }
+            if (pairedDevices?.isEmpty() == true) {
+                // There are no paired devices.
+                return
+            }
         // Loop through paired devices and find the one we want to send the file to.
         if (pairedDevices != null) {
             for (device in pairedDevices) {
-                if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.BLUETOOTH_CONNECT
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return
-                }
                 if (device.name == deviceName) {
                     val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
                     val socket: BluetoothSocket = device.createRfcommSocketToServiceRecord(uuid)
